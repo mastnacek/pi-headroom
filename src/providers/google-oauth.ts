@@ -161,12 +161,9 @@ const geminiCliId = [
   "-oo8ft2oprdrnp9e3aqf6av3hmdib135j",
   ".apps.googleusercontent.com",
 ].join("");
-const geminiCliSec = [
-  "GOCSPX",
-  "-4uHgMPm",
-  "-1o7Sk",
-  "-geV6Cu5clXFsxl",
-].join("");
+const geminiCliSec = ["GOCSPX", "-4uHgMPm", "-1o7Sk", "-geV6Cu5clXFsxl"].join(
+  "",
+);
 
 const geminiCliVariant: VariantConfig = {
   label: "Gemini CLI",
@@ -309,10 +306,7 @@ const antigravityId = [
   "-tmhssin2h21lcre235vtolojh4g403ep",
   ".apps.googleusercontent.com",
 ].join("");
-const antigravitySec = [
-  "GOCSPX",
-  "-K58FWR486LdLJ1mLB8sXC4z6qDAf",
-].join("");
+const antigravitySec = ["GOCSPX", "-K58FWR486LdLJ1mLB8sXC4z6qDAf"].join("");
 
 const antigravityVariant: VariantConfig = {
   label: "Antigravity",
@@ -576,8 +570,9 @@ function sleepUnlessAborted(ms: number, signal?: AbortSignal): Promise<void> {
 function isVpcScAffectedUser(payload: unknown): boolean {
   if (!payload || typeof payload !== "object" || !("error" in payload))
     return false;
-  const error = (payload as { error?: { details?: Array<{ reason?: string }> } })
-    .error;
+  const error = (
+    payload as { error?: { details?: Array<{ reason?: string }> } }
+  ).error;
   return (
     Array.isArray(error?.details) &&
     error.details.some((d) => d?.reason === "SECURITY_POLICY_VIOLATED")
@@ -681,8 +676,7 @@ async function startCallbackServer(
       reject,
     );
     const addr = primary.address();
-    primaryPort =
-      addr && typeof addr === "object" ? addr.port : preferredPort;
+    primaryPort = addr && typeof addr === "object" ? addr.port : preferredPort;
   } catch {
     primary = await serveCallback(
       "127.0.0.1",
@@ -804,13 +798,11 @@ export async function loginGoogle(
     options: [
       {
         id: "antigravity",
-        label:
-          "Antigravity — newest Gemini models (daily-cloudcode-pa)",
+        label: "Antigravity — newest Gemini models (daily-cloudcode-pa)",
       },
       {
         id: "gemini-cli",
-        label:
-          "Gemini CLI — standard Cloud Code Assist (cloudcode-pa)",
+        label: "Gemini CLI — standard Cloud Code Assist (cloudcode-pa)",
       },
     ],
   });
@@ -991,8 +983,7 @@ export function deriveAntigravitySessionId(
     return signedDecimalSessionId(value);
   }
   return signedDecimalSessionId(
-    BigInt(`0x${randomBytes(8).toString("hex")}`) %
-      9_000_000_000_000_000_000n,
+    BigInt(`0x${randomBytes(8).toString("hex")}`) % 9_000_000_000_000_000_000n,
   );
 }
 
@@ -1036,8 +1027,7 @@ function thinkingConfigFor(
   if (isGemini3Pro(model.id)) {
     return {
       includeThoughts: true,
-      thinkingLevel:
-        effort === "minimal" || effort === "low" ? "LOW" : "HIGH",
+      thinkingLevel: effort === "minimal" || effort === "low" ? "LOW" : "HIGH",
     };
   }
   if (isGemini3Flash(model.id)) {
@@ -1318,8 +1308,7 @@ function consumePlanningBuffer(
   if (!isPlanningLeakPrefix(text)) return { kind: "plain", visibleText: text };
 
   const leading =
-    splitLeadingJsonObject(text, false) ??
-    splitLeadingJsonObject(text, true);
+    splitLeadingJsonObject(text, false) ?? splitLeadingJsonObject(text, true);
 
   if (!leading) {
     if (isFinal) {
@@ -1381,8 +1370,7 @@ function parseStoredCredential(apiKey: string | undefined): ParsedCredential {
       return {
         token: parsed.token,
         projectId: parsed.projectId,
-        variant:
-          parsed.variant === "gemini-cli" ? "gemini-cli" : "antigravity",
+        variant: parsed.variant === "gemini-cli" ? "gemini-cli" : "antigravity",
       };
     }
   } catch {
@@ -1392,7 +1380,13 @@ function parseStoredCredential(apiKey: string | undefined): ParsedCredential {
 }
 
 function isRetriableStatus(status: number): boolean {
-  return status === 429 || status === 500 || status === 502 || status === 503 || status === 504;
+  return (
+    status === 429 ||
+    status === 500 ||
+    status === 502 ||
+    status === 503 ||
+    status === 504
+  );
 }
 
 function isRetriableTransportError(error: unknown): boolean {
@@ -1815,7 +1809,13 @@ export function streamGoogleCca(
               cacheWrite: 0,
               totalTokens: u.totalTokenCount || 0,
               ...(thinking > 0 ? { reasoning: thinking } : {}),
-              cost: { input: 0, output: 0, cacheRead: 0, cacheWrite: 0, total: 0 },
+              cost: {
+                input: 0,
+                output: 0,
+                cacheRead: 0,
+                cacheWrite: 0,
+                total: 0,
+              },
             };
             calculateCost(model, output.usage);
           }
@@ -1849,14 +1849,18 @@ export function streamGoogleCca(
               options,
             );
           } catch (err) {
-            if (options?.signal?.aborted) throw new Error("Request was aborted");
+            if (options?.signal?.aborted)
+              throw new Error("Request was aborted");
             if (!isLastEndpoint && isRetriableTransportError(err)) break;
             throw err;
           }
 
           if (!response.ok) {
             const errorText = await response.text().catch(() => "");
-            if (isRetriableStatus(response.status) && attempt < MAX_EMPTY_RETRIES) {
+            if (
+              isRetriableStatus(response.status) &&
+              attempt < MAX_EMPTY_RETRIES
+            ) {
               await sleep(RETRY_BASE_DELAY_MS * 2 ** attempt, options?.signal);
               resetOutput();
               continue;
@@ -1871,7 +1875,8 @@ export function streamGoogleCca(
           try {
             meaningful = await consumeResponse(response);
           } catch (err) {
-            if (options?.signal?.aborted) throw new Error("Request was aborted");
+            if (options?.signal?.aborted)
+              throw new Error("Request was aborted");
             if (isRetriableTransportError(err) && attempt < MAX_EMPTY_RETRIES) {
               await sleep(RETRY_BASE_DELAY_MS * 2 ** attempt, options?.signal);
               resetOutput();

@@ -189,8 +189,7 @@ export default function headroomExtension(pi: ExtensionAPI): void {
       ),
       detailed: Type.Optional(
         Type.Boolean({
-          description:
-            "Return full markdown breakdown instead of summary text",
+          description: "Return full markdown breakdown instead of summary text",
         }),
       ),
     }),

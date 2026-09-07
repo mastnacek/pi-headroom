@@ -137,23 +137,23 @@ describe("statusline formatting", () => {
 
   it("formats detailed markdown report with session and lifetime sections", () => {
     const report = formatDetailedReport(sampleMetrics, sampleConfig);
-    assert.match(report, /Headroom Context Optimization Status/);
-    assert.match(report, /Current Session Savings/);
+    assert.match(report, /Headroom — Stav optimalizace kontextu/);
+    assert.match(report, /Úspora v aktuální relaci/);
     assert.match(report, /6,000/);
-    assert.match(report, /Lifetime \/ Global Savings/);
+    assert.match(report, /Celoživotní \/ Globální úspora/);
     assert.match(report, /18,346/);
-    assert.match(report, /Tool Schemas Pruned/);
-    assert.match(report, /Active Headroom Routes/);
+    assert.match(report, /Odstraněná schémata nástrojů/);
+    assert.match(report, /Aktivní Headroom trasy/);
     assert.match(report, /`google`/);
     assert.match(report, /`openrouter`/);
   });
 
   it("formats session markdown report", () => {
     const report = formatSessionReport(sampleMetrics, sampleConfig);
-    assert.match(report, /Headroom Session Savings/);
-    assert.match(report, /Current Session Reduction/);
-    assert.match(report, /40\.0%/);
+    assert.match(report, /Headroom — Úspora kontextu v relaci/);
+    assert.match(report, /Úspora v aktuální relaci/);
+    assert.match(report, /40\.0\s*%/);
     assert.match(report, /6,000/);
-    assert.match(report, /Lifetime proxy savings/);
+    assert.match(report, /Celoživotní úspora proxy/);
   });
 });

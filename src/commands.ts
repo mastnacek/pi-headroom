@@ -28,19 +28,19 @@ export interface AutocompleteItem {
 }
 
 const COMMAND_DOCS = {
-  session: "show context reduction and savings for current session only",
-  status: "display detailed headroom metrics, active routes, and uptime",
-  savings: "show token reduction and cost savings breakdown",
-  route: "configure provider proxy routing (google | openrouter | openai | anthropic | moonshotai)",
-  scope: "switch statusline badge scope (session | lifetime)",
-  "reset-session": "reset session baseline counter to now",
-  dashboard: "open Headroom web dashboard in browser",
-  refresh: "force immediate stats probe and update statusline",
-  on: "enable statusline badge display",
-  off: "disable statusline badge display",
-  format: "set statusline format (compact | normal | detailed)",
-  port: "configure proxy port (default: 8787)",
-  help: "display command reference and help banner",
+  session: "zobrazit úsporu kontextu a tokenů pro aktuální relaci",
+  status: "zobrazit detailní metriky Headroom, aktivní směrování a uptime",
+  savings: "zobrazit detailní rozpis úspory tokenů (schémata vs komprese zpráv)",
+  route: "nastavit proxy směrování poskytovatelů (google | openrouter | openai | anthropic | moonshotai)",
+  scope: "přepnout rozsah zobrazení ve statusline (session | lifetime)",
+  "reset-session": "vynulovat výchozí stav relace na aktuální okamžik",
+  dashboard: "otevřít webový dashboard Headroom v prohlížeči",
+  refresh: "vynutit okamžitý dotaz na metriky a aktualizovat statusline",
+  on: "zapnout zobrazení štítku v patičce (statusline)",
+  off: "vypnout zobrazení štítku v patičce (statusline)",
+  format: "nastavit formát štítku (compact | normal | detailed)",
+  port: "nastavit port Headroom proxy (výchozí: 8787)",
+  help: "zobrazit přehled příkazů a nápovědu",
 } as const;
 
 export function buildHelpText(
@@ -52,8 +52,8 @@ export function buildHelpText(
     : `${ANSI_BOLD}${ANSI_DIM}○ Offline${ANSI_RESET}`;
 
   const enabledBadge = config.enabled
-    ? `${ANSI_BOLD}${ANSI_GREEN}● Enabled${ANSI_RESET}`
-    : `${ANSI_BOLD}${ANSI_DIM}○ Disabled${ANSI_RESET}`;
+    ? `${ANSI_BOLD}${ANSI_GREEN}● Zapnuto${ANSI_RESET}`
+    : `${ANSI_BOLD}${ANSI_DIM}○ Vypnuto${ANSI_RESET}`;
 
   const sessionSaved = metrics.session?.tokensSaved ?? 0;
   const sessionPct = (metrics.session?.savingsPct ?? 0).toFixed(1);
@@ -64,30 +64,30 @@ export function buildHelpText(
     .map(([name]) => name);
 
   return [
-    `${ANSI_BOLD}${ANSI_CYAN}⚡ pi-headroom${ANSI_RESET} — Unified Context Optimization & Provider Routing Suite`,
-    `Real-time Headroom proxy compression, multi-provider routing (Google OAuth, OpenRouter), and statusline.`,
+    `${ANSI_BOLD}${ANSI_CYAN}⚡ /headroom${ANSI_RESET} — Správa optimalizace kontextu a směrování poskytovatelů`,
+    `Optimalizace a komprese kontextu v reálném čase přes Headroom proxy s podporou Google OAuth a OpenRouter.`,
     ``,
-    `${ANSI_BOLD}Commands & Subcommands:${ANSI_RESET}`,
-    `  /headroom session                        — show savings for active Pi session`,
-    `  /headroom status                         — show full metrics, active routes & lifetime report`,
-    `  /headroom savings                        — view token savings & cost breakdown`,
-    `  /headroom route <provider> on|off        — toggle routing (google | openrouter | openai | anthropic | moonshotai)`,
-    `  /headroom scope <session|lifetime>       — switch badge scope (current: ${config.scope})`,
-    `  /headroom reset-session                  — reset session baseline counter to now`,
-    `  /headroom dashboard                      — open web dashboard (http://${config.host}:${config.port}/dashboard)`,
-    `  /headroom refresh                        — force immediate stats probe & statusline update`,
-    `  /headroom on | off                       — toggle statusline footer display (${enabledBadge})`,
-    `  /headroom format <type>                  — set badge format (compact | normal | detailed)`,
-    `  /headroom port <number>                  — set proxy port (current: ${config.port})`,
-    `  /headroom help                           — display this reference guide`,
+    `${ANSI_BOLD}Příkazy & Podpříkazy:${ANSI_RESET}`,
+    `  /headroom session                        — zobrazit úsporu pro aktuální relaci Pi`,
+    `  /headroom status                         — zobrazit plný stav, aktivní trasy a statistiky`,
+    `  /headroom savings                        — detailní rozpis úspory tokenů a nákladů`,
+    `  /headroom route <poskytovatel> on|off    — přepnout směrování (google | openrouter | openai | anthropic | moonshotai)`,
+    `  /headroom scope <session|lifetime>       — přepnout rozsah statusline (aktuálně: ${config.scope})`,
+    `  /headroom reset-session                  — vynulovat počítadlo relace na aktuální stav`,
+    `  /headroom dashboard                      — otevřít webový dashboard (http://${config.host}:${config.port}/dashboard)`,
+    `  /headroom refresh                        — vynutit aktualizaci stavu a statusline`,
+    `  /headroom on | off                       — zapnout / vypnout zobrazení v patičce (${enabledBadge})`,
+    `  /headroom format <typ>                   — nastavit styl zobrazení (compact | normal | detailed)`,
+    `  /headroom port <číslo>                   — nastavit port proxy (aktuálně: ${config.port})`,
+    `  /headroom help                           — zobrazit tuto nápovědu`,
     ``,
-    `${ANSI_DIM}Tip: Append --global to any setting command to persist across all sessions.${ANSI_RESET}`,
+    `${ANSI_DIM}Tip: Přidejte --global k jakémukoli příkazu pro trvalé uložení do ~/.pi/agent/headroom.json.${ANSI_RESET}`,
     ``,
-    `${ANSI_BOLD}Current Runtime Overview:${ANSI_RESET}`,
-    `  • Proxy: ${statusBadge} | Statusline: ${enabledBadge} | Scope: ${ANSI_BOLD}${ANSI_CYAN}${config.scope}${ANSI_RESET} | Format: ${ANSI_BOLD}${ANSI_CYAN}${config.format}${ANSI_RESET}`,
-    `  • Active Routes: ${activeRoutes.length > 0 ? activeRoutes.map((r) => `${ANSI_GREEN}${r}${ANSI_RESET}`).join(", ") : `${ANSI_DIM}none${ANSI_RESET}`}`,
-    `  • Session Savings: ${ANSI_BOLD}${ANSI_GREEN}${sessionPct}%${ANSI_RESET} (${sessionSaved.toLocaleString()} tokens · $${sessionCost})`,
-    `  • Lifetime Savings: ${ANSI_BOLD}${ANSI_GREEN}${metrics.savingsPct.toFixed(1)}%${ANSI_RESET} (${metrics.tokensSaved.toLocaleString()} tokens · $${metrics.costSavedUsd.toFixed(2)})`,
+    `${ANSI_BOLD}Aktuální stav systému:${ANSI_RESET}`,
+    `  • Proxy: ${statusBadge} | Statusline: ${enabledBadge} | Rozsah: ${ANSI_BOLD}${ANSI_CYAN}${config.scope}${ANSI_RESET} | Formát: ${ANSI_BOLD}${ANSI_CYAN}${config.format}${ANSI_RESET}`,
+    `  • Aktivní trasy: ${activeRoutes.length > 0 ? activeRoutes.map((r) => `${ANSI_GREEN}${r}${ANSI_RESET}`).join(", ") : `${ANSI_DIM}žádné${ANSI_RESET}`}`,
+    `  • Úspora relace: ${ANSI_BOLD}${ANSI_GREEN}${sessionPct} %${ANSI_RESET} (${sessionSaved.toLocaleString()} tokenů · $${sessionCost})`,
+    `  • Celoživotní úspora: ${ANSI_BOLD}${ANSI_GREEN}${metrics.savingsPct.toFixed(1)} %${ANSI_RESET} (${metrics.tokensSaved.toLocaleString()} tokenů · $${metrics.costSavedUsd.toFixed(2)})`,
   ].join("\n");
 }
 
@@ -128,17 +128,17 @@ export function registerHeadroomCommands(
           {
             value: "format compact",
             label: "format compact",
-            description: "Minimal percentage badge",
+            description: "Minimální zobrazení pouze s procenty úspory",
           },
           {
             value: "format normal",
             label: "format normal",
-            description: "Standard percentage and token diff",
+            description: "Standardní zobrazení s procenty a ušetřenými tokeny",
           },
           {
             value: "format detailed",
             label: "format detailed",
-            description: "Full badge with version & requests",
+            description: "Podrobné zobrazení s verzí a počtem požadavků",
           },
         ];
         const filtered = formats.filter((i) =>
@@ -152,12 +152,12 @@ export function registerHeadroomCommands(
           {
             value: "scope session",
             label: "scope session",
-            description: "Show token savings for current Pi session",
+            description: "Zobrazovat úsporu tokenů pro aktuální relaci Pi",
           },
           {
             value: "scope lifetime",
             label: "scope lifetime",
-            description: "Show total lifetime proxy savings",
+            description: "Zobrazovat celkovou celoživotní úsporu proxy",
           },
         ];
         const filtered = scopes.filter((i) =>
@@ -181,12 +181,12 @@ export function registerHeadroomCommands(
             {
               value: `route ${p} on`,
               label: `route ${p} on`,
-              description: `Route ${p} through Headroom proxy`,
+              description: `Směrovat požadavky ${p} přes Headroom kompresní proxy`,
             },
             {
               value: `route ${p} off`,
               label: `route ${p} off`,
-              description: `Disable Headroom routing for ${p}`,
+              description: `Vypnout směrování pro ${p} (přímé volání API)`,
             },
           );
         }
@@ -212,7 +212,7 @@ export function registerHeadroomCommands(
           {
             value: `${cmd} --global`,
             label: `${cmd} --global`,
-            description: "Apply setting globally for all sessions",
+            description: "Uložit nastavení globálně pro všechny relace",
           },
         ];
         const filtered = flags.filter((i) =>
@@ -278,7 +278,7 @@ export function registerHeadroomCommands(
           ctx.ui.setStatus("headroom", formatStatusline(metrics, config));
         }
         ctx.ui.notify(
-          "⚡ Headroom session baseline reset to current moment.",
+          "⚡ Počítadlo úspory pro aktuální relaci bylo vynulováno na aktuální stav.",
           "info",
         );
         break;
@@ -299,7 +299,7 @@ export function registerHeadroomCommands(
 
         if (!provider || !action || !["on", "off", "enable", "disable"].includes(action)) {
           ctx.ui.notify(
-            "Usage: /headroom route <google|openrouter|openai|anthropic|moonshotai> on|off [--global]",
+            "Použití: /headroom route <google|openrouter|openai|anthropic|moonshotai> on|off [--global]",
             "warning",
           );
           return;
@@ -314,7 +314,7 @@ export function registerHeadroomCommands(
         config = saveConfig(ctx.cwd, { routes: updatedRoutes }, isGlobal);
         updateState(config, metrics);
         ctx.ui.notify(
-          `⚡ Headroom route for "${provider}" turned ${isEnable ? "ON" : "OFF"}${isGlobal ? " (globally)" : ""}.`,
+          `⚡ Headroom směrování pro "${provider}" bylo ${isEnable ? "ZAPNUTO" : "VYPNUTO"}${isGlobal ? " (globálně)" : ""}.`,
           "info",
         );
         break;
@@ -323,7 +323,7 @@ export function registerHeadroomCommands(
       case "dashboard": {
         openDashboard(config.host, config.port);
         ctx.ui.notify(
-          `Opening Headroom dashboard at http://${config.host}:${config.port}/dashboard ...`,
+          `Otevírám Headroom dashboard na adrese http://${config.host}:${config.port}/dashboard ...`,
           "info",
         );
         break;
@@ -345,7 +345,7 @@ export function registerHeadroomCommands(
             ? metrics.session.tokensSaved
             : metrics.tokensSaved;
         ctx.ui.notify(
-          `⚡ Headroom stats refreshed: ${activePct.toFixed(1)}% savings (${activeTokens.toLocaleString()} tokens saved)`,
+          `⚡ Statistiky Headroom aktualizovány: ${activePct.toFixed(1)} % úspora (${activeTokens.toLocaleString()} ušetřených tokenů)`,
           "info",
         );
         break;
@@ -354,7 +354,7 @@ export function registerHeadroomCommands(
       case "scope": {
         if (value !== "session" && value !== "lifetime") {
           ctx.ui.notify(
-            `Invalid scope "${value}". Choose: session | lifetime`,
+            `Neplatný rozsah "${value}". Vyberte: session | lifetime`,
             "warning",
           );
           return;
@@ -367,7 +367,7 @@ export function registerHeadroomCommands(
           ctx.ui.setStatus("headroom", formatStatusline(metrics, config));
         }
         ctx.ui.notify(
-          `⚡ Headroom statusline scope set to "${value}"${isGlobal ? " (globally)" : ""}.`,
+          `⚡ Rozsah zobrazení ve statusline nastaven na "${value}"${isGlobal ? " (globálně)" : ""}.`,
           "info",
         );
         break;
@@ -382,7 +382,7 @@ export function registerHeadroomCommands(
           ctx.ui.setStatus("headroom", formatStatusline(metrics, config));
         }
         ctx.ui.notify(
-          `⚡ Headroom statusline enabled${isGlobal ? " (globally)" : ""}.`,
+          `⚡ Zobrazení Headroom ve statusline zapnuto${isGlobal ? " (globálně)" : ""}.`,
           "info",
         );
         break;
@@ -395,7 +395,7 @@ export function registerHeadroomCommands(
           ctx.ui.setStatus("headroom", "");
         }
         ctx.ui.notify(
-          `⚡ Headroom statusline disabled${isGlobal ? " (globally)" : ""}.`,
+          `⚡ Zobrazení Headroom ve statusline vypnuto${isGlobal ? " (globálně)" : ""}.`,
           "info",
         );
         break;
@@ -404,7 +404,7 @@ export function registerHeadroomCommands(
       case "format": {
         if (value !== "compact" && value !== "normal" && value !== "detailed") {
           ctx.ui.notify(
-            `Invalid format "${value}". Choose: compact | normal | detailed`,
+            `Neplatný formát "${value}". Vyberte: compact | normal | detailed`,
             "warning",
           );
           return;
@@ -417,7 +417,7 @@ export function registerHeadroomCommands(
           ctx.ui.setStatus("headroom", formatStatusline(metrics, config));
         }
         ctx.ui.notify(
-          `Format set to "${value}"${isGlobal ? " (globally)" : ""}.`,
+          `Formát statusline nastaven na "${value}"${isGlobal ? " (globálně)" : ""}.`,
           "info",
         );
         break;
@@ -427,7 +427,7 @@ export function registerHeadroomCommands(
         const portNum = parseInt(value, 10);
         if (Number.isNaN(portNum) || portNum <= 0 || portNum > 65535) {
           ctx.ui.notify(
-            `Invalid port "${value}". Must be a number between 1 and 65535.`,
+            `Neplatný port "${value}". Musí být číslo mezi 1 a 65535.`,
             "warning",
           );
           return;
@@ -440,7 +440,7 @@ export function registerHeadroomCommands(
           ctx.ui.setStatus("headroom", formatStatusline(metrics, config));
         }
         ctx.ui.notify(
-          `Headroom port set to ${portNum}${isGlobal ? " (globally)" : ""}.`,
+          `Port Headroom proxy nastaven na ${portNum}${isGlobal ? " (globálně)" : ""}.`,
           "info",
         );
         break;
@@ -448,7 +448,7 @@ export function registerHeadroomCommands(
 
       default:
         ctx.ui.notify(
-          `Unknown subcommand "${subcommand}". Use: /headroom help`,
+          `Neznámý příkaz "${subcommand}". Použijte: /headroom help`,
           "warning",
         );
         break;
@@ -456,7 +456,7 @@ export function registerHeadroomCommands(
   };
 
   pi.registerCommand("headroom", {
-    description: "Manage Headroom context optimization, provider routing, and statusline",
+    description: "Správa optimalizace kontextu Headroom, směrování poskytovatelů a statusline",
     getArgumentCompletions: getCompletions,
     handler: commandHandler,
   });

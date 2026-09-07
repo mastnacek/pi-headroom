@@ -120,35 +120,35 @@ export function formatSessionReport(
   metrics: HeadroomMetrics,
   config: HeadroomConfig,
 ): string {
-  const statusIcon = metrics.online ? "🟢 Active" : "🔴 Offline";
+  const statusIcon = metrics.online ? "🟢 Aktivní" : "🔴 Offline";
   const session = metrics.session;
 
   const startTimeStr = session?.startedAtIso
     ? new Date(session.startedAtIso).toLocaleString()
-    : "current session";
+    : "aktuální relace";
 
   const lines: string[] = [
-    `# ⚡ Headroom Session Savings`,
+    `# ⚡ Headroom — Úspora kontextu v relaci`,
     ``,
-    `* **Session Started:** ${startTimeStr}`,
-    `* **Proxy Status:** ${statusIcon} (http://${config.host}:${config.port})`,
+    `* **Zahájení relace:** ${startTimeStr}`,
+    `* **Stav proxy:** ${statusIcon} (http://${config.host}:${config.port})`,
   ];
 
   if (metrics.activeModel) {
-    lines.push(`* **Active Model:** \`${metrics.activeModel}\``);
+    lines.push(`* **Aktivní model:** \`${metrics.activeModel}\``);
   }
 
   lines.push(
     ``,
-    `### 🎯 Current Session Reduction`,
-    `* **Compression Ratio:** **${(session?.savingsPct ?? 0).toFixed(1)}%**`,
-    `* **Tokens Saved:** **${formatNumber(session?.tokensSaved ?? 0)}** tokens`,
-    `* **Original Input:** ${formatNumber(session?.tokensBefore ?? 0)} tokens`,
-    `* **Optimized Input:** ${formatNumber(session?.tokensAfter ?? 0)} tokens`,
-    `* **Cost Avoided:** **${formatCost(session?.costSavedUsd ?? 0)}**`,
-    `* **Session Requests:** ${formatNumber(session?.totalRequests ?? 0)}`,
+    `### 🎯 Úspora v aktuální relaci`,
+    `* **Míra komprese:** **${(session?.savingsPct ?? 0).toFixed(1)} %**`,
+    `* **Ušetřené tokeny:** **${formatNumber(session?.tokensSaved ?? 0)}** tokenů`,
+    `* **Původní vstup:** ${formatNumber(session?.tokensBefore ?? 0)} tokenů`,
+    `* **Optimalizovaný vstup:** ${formatNumber(session?.tokensAfter ?? 0)} tokenů`,
+    `* **Ušetřené náklady:** **${formatCost(session?.costSavedUsd ?? 0)}**`,
+    `* **Požadavky v relaci:** ${formatNumber(session?.totalRequests ?? 0)}`,
     ``,
-    `*(Lifetime proxy savings: ${formatNumber(metrics.tokensSaved)} tokens · ${formatCost(metrics.costSavedUsd)} across ${formatNumber(metrics.totalRequests)} reqs)*`,
+    `*(Celoživotní úspora proxy: ${formatNumber(metrics.tokensSaved)} tokenů · ${formatCost(metrics.costSavedUsd)} v ${formatNumber(metrics.totalRequests)} požadavcích)*`,
   );
 
   return lines.join("\n");
@@ -161,72 +161,72 @@ export function formatDetailedReport(
   metrics: HeadroomMetrics,
   config: HeadroomConfig,
 ): string {
-  const statusIcon = metrics.online ? "🟢 Active" : "🔴 Offline";
+  const statusIcon = metrics.online ? "🟢 Aktivní" : "🔴 Offline";
   const uptimeStr = formatUptime(metrics.uptimeSeconds);
-  const versionStr = metrics.version ? `v${metrics.version}` : "unknown";
+  const versionStr = metrics.version ? `v${metrics.version}` : "neznámá";
 
   const lines: string[] = [
-    `# ⚡ Headroom Context Optimization Status`,
+    `# ⚡ Headroom — Stav optimalizace kontextu`,
     ``,
-    `* **Proxy Status:** ${statusIcon} (http://${config.host}:${config.port})`,
-    `* **Version:** ${versionStr} | **Uptime:** ${uptimeStr}`,
-    `* **Data Source:** ${metrics.source}`,
+    `* **Stav proxy:** ${statusIcon} (http://${config.host}:${config.port})`,
+    `* **Verze:** ${versionStr} | **Doba běhu:** ${uptimeStr}`,
+    `* **Zdroj dat:** ${metrics.source}`,
   ];
 
   if (metrics.session) {
     const s = metrics.session;
     lines.push(
       ``,
-      `### 🎯 Current Session Savings`,
-      `* **Session Compression Ratio:** **${s.savingsPct.toFixed(1)}%**`,
-      `* **Session Tokens Saved:** **${formatNumber(s.tokensSaved)}** tokens`,
-      `* **Session Original Input:** ${formatNumber(s.tokensBefore)} tokens`,
-      `* **Session Optimized Input:** ${formatNumber(s.tokensAfter)} tokens`,
-      `* **Session Cost Avoided:** **${formatCost(s.costSavedUsd)}**`,
-      `* **Session Requests:** ${formatNumber(s.totalRequests)}`,
+      `### 🎯 Úspora v aktuální relaci`,
+      `* **Míra komprese relace:** **${s.savingsPct.toFixed(1)} %**`,
+      `* **Ušetřené tokeny v relaci:** **${formatNumber(s.tokensSaved)}** tokenů`,
+      `* **Původní vstup relace:** ${formatNumber(s.tokensBefore)} tokenů`,
+      `* **Optimalizovaný vstup relace:** ${formatNumber(s.tokensAfter)} tokenů`,
+      `* **Ušetřené náklady v relaci:** **${formatCost(s.costSavedUsd)}**`,
+      `* **Počet požadavků v relaci:** ${formatNumber(s.totalRequests)}`,
     );
   }
 
   lines.push(
     ``,
-    `### 🌐 Lifetime / Global Savings`,
-    `* **Lifetime Compression Ratio:** **${metrics.savingsPct.toFixed(1)}%**`,
-    `* **Lifetime Tokens Saved:** **${formatNumber(metrics.tokensSaved)}** tokens`,
-    `* **Lifetime Original Input:** ${formatNumber(metrics.tokensBefore)} tokens`,
-    `* **Lifetime Optimized Input:** ${formatNumber(metrics.tokensAfter)} tokens`,
-    `* **Estimated Cost Avoided:** **${formatCost(metrics.costSavedUsd)}**`,
-    `* **Total Requests:** ${formatNumber(metrics.totalRequests)}`,
+    `### 🌐 Celoživotní / Globální úspora`,
+    `* **Celoživotní míra komprese:** **${metrics.savingsPct.toFixed(1)} %**`,
+    `* **Celoživotně ušetřené tokeny:** **${formatNumber(metrics.tokensSaved)}** tokenů`,
+    `* **Celoživotní původní vstup:** ${formatNumber(metrics.tokensBefore)} tokenů`,
+    `* **Celoživotní optimalizovaný vstup:** ${formatNumber(metrics.tokensAfter)} tokenů`,
+    `* **Odhadované ušetřené náklady:** **${formatCost(metrics.costSavedUsd)}**`,
+    `* **Celkem požadavků:** ${formatNumber(metrics.totalRequests)}`,
   );
 
   if (metrics.schemaTokensSaved > 0 || metrics.messageTokensSaved > 0) {
-    lines.push(``, `### 🔍 Savings Breakdown`);
+    lines.push(``, `### 🔍 Rozpis úspory tokenů`);
     if (metrics.schemaTokensSaved > 0) {
       lines.push(
-        `* **Tool Schemas Pruned:** ${formatNumber(metrics.schemaTokensSaved)} tokens`,
+        `* **Odstraněná schémata nástrojů:** ${formatNumber(metrics.schemaTokensSaved)} tokenů`,
       );
     }
     if (metrics.messageTokensSaved > 0) {
       lines.push(
-        `* **Message Compaction:** ${formatNumber(metrics.messageTokensSaved)} tokens`,
+        `* **Komprese historie zpráv:** ${formatNumber(metrics.messageTokensSaved)} tokenů`,
       );
     }
   }
 
   // Active proxy routing status
   const activeRoutes = Object.entries(config.routes)
-    .filter(([_, enabled]) => enabled)
+    .filter(([, enabled]) => enabled)
     .map(([name]) => `\`${name}\``);
 
   if (activeRoutes.length > 0) {
-    lines.push(``, `### 🔀 Active Headroom Routes`, `* **Routed Providers:** ${activeRoutes.join(", ")}`);
+    lines.push(``, `### 🔀 Aktivní Headroom trasy`, `* **Směrovaní poskytovatelé:** ${activeRoutes.join(", ")}`);
   }
 
   if (metrics.activeModel) {
-    lines.push(``, `* **Active Model:** \`${metrics.activeModel}\``);
+    lines.push(``, `* **Aktivní model:** \`${metrics.activeModel}\``);
   }
 
   if (metrics.error) {
-    lines.push(``, `⚠️ **Notice:** Last probe returned: *${metrics.error}*`);
+    lines.push(``, `⚠️ **Upozornění:** Poslední dotaz vrátil: *${metrics.error}*`);
   }
 
   return lines.join("\n");

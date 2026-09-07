@@ -15,8 +15,7 @@ export function registerRetrieveTool(
     description:
       "Retrieve original uncompressed content that was compressed by Headroom. " +
       "Use when you need full verbatim detail about something that was summarized or compressed.",
-    promptSnippet:
-      "Retrieve compressed context detail from Headroom cache",
+    promptSnippet: "Retrieve compressed context detail from Headroom cache",
     parameters: Type.Object({
       hash: Type.String({
         description: "Hash identifier for the compressed content to retrieve",
@@ -68,7 +67,10 @@ export function registerRetrieveTool(
                 text: `Retrieval failed (${response.status}): ${errorText}`,
               },
             ],
-            details: { status: response.status, error: errorText } as Record<string, unknown>,
+            details: { status: response.status, error: errorText } as Record<
+              string,
+              unknown
+            >,
             isError: true,
           };
         }
@@ -100,8 +102,7 @@ export function registerRetrieveTool(
           content: [
             {
               type: "text",
-              text:
-                typeof data === "string" ? data : JSON.stringify(data),
+              text: typeof data === "string" ? data : JSON.stringify(data),
             },
           ],
           details: data as Record<string, unknown>,
