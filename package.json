@@ -1,0 +1,62 @@
+{
+  "name": "pi-headroom",
+  "version": "1.0.0",
+  "description": "Unified Headroom context optimization suite for Pi coding agent — real-time statusline badge, session savings tracking, CCR retrieval, and multi-provider proxy routing (Google OAuth/Antigravity, OpenRouter, and more).",
+  "type": "module",
+  "main": "index.ts",
+  "types": "index.ts",
+  "license": "MIT",
+  "author": "mastnacek",
+  "homepage": "https://github.com/mastnacek/pi-headroom#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mastnacek/pi-headroom.git"
+  },
+  "bugs": {
+    "url": "https://github.com/mastnacek/pi-headroom/issues"
+  },
+  "keywords": [
+    "pi-package",
+    "pi",
+    "pi-coding-agent",
+    "pi-extension",
+    "headroom",
+    "context-optimization",
+    "compression",
+    "statusline",
+    "google-oauth",
+    "antigravity",
+    "openrouter"
+  ],
+  "files": [
+    "src",
+    "index.ts",
+    "README.md",
+    "LICENSE",
+    "package.json"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "check": "tsc --noEmit",
+    "test": "tsc && node --test dist/test/**/*.test.js"
+  },
+  "pi": {
+    "extensions": [
+      "./index.ts"
+    ]
+  },
+  "peerDependencies": {
+    "@earendil-works/pi-ai": "*",
+    "@earendil-works/pi-coding-agent": "*",
+    "@earendil-works/pi-tui": "*",
+    "typebox": "*"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "@earendil-works/pi-ai": "*",
+    "@earendil-works/pi-coding-agent": "*",
+    "@earendil-works/pi-tui": "*",
+    "typebox": "^1.0.8",
+    "typescript": "^5.8.0"
+  }
+}
