@@ -2,6 +2,7 @@ import type {
   ExtensionAPI,
   ExtensionContext,
 } from "@earendil-works/pi-coding-agent";
+import { StringEnum } from "@earendil-works/pi-ai";
 import { Type } from "typebox";
 import { loadConfig } from "./src/config.js";
 import {
@@ -175,17 +176,12 @@ export default function headroomExtension(pi: ExtensionAPI): void {
         }),
       ),
       scope: Type.Optional(
-        Type.Union(
-          [
-            Type.Literal("session"),
-            Type.Literal("lifetime"),
-            Type.Literal("both"),
-          ],
-          {
-            description:
-              "Scope of metrics to return: session | lifetime | both (default: both)",
-          },
-        ),
+        // StringEnum (not Type.Union/Type.Literal): Google's API rejects
+        // union literals (AGENTS.md §2).
+        StringEnum(["session", "lifetime", "both"] as const, {
+          description:
+            "Scope of metrics to return: session | lifetime | both (default: both)",
+        }),
       ),
       detailed: Type.Optional(
         Type.Boolean({
