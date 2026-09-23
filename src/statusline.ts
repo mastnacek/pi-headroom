@@ -218,7 +218,11 @@ export function formatDetailedReport(
     .map(([name]) => `\`${name}\``);
 
   if (activeRoutes.length > 0) {
-    lines.push(``, `### 🔀 Aktivní Headroom trasy`, `* **Směrovaní poskytovatelé:** ${activeRoutes.join(", ")}`);
+    lines.push(
+      ``,
+      `### 🔀 Aktivní Headroom trasy`,
+      `* **Směrovaní poskytovatelé:** ${activeRoutes.join(", ")}`,
+    );
   }
 
   if (metrics.activeModel) {
@@ -226,7 +230,10 @@ export function formatDetailedReport(
   }
 
   if (metrics.error) {
-    lines.push(``, `⚠️ **Upozornění:** Poslední dotaz vrátil: *${metrics.error}*`);
+    lines.push(
+      ``,
+      `⚠️ **Upozornění:** Poslední dotaz vrátil: *${metrics.error}*`,
+    );
   }
 
   return lines.join("\n");

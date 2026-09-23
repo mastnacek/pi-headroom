@@ -30,8 +30,10 @@ export interface AutocompleteItem {
 const COMMAND_DOCS = {
   session: "zobrazit úsporu kontextu a tokenů pro aktuální relaci",
   status: "zobrazit detailní metriky Headroom, aktivní směrování a uptime",
-  savings: "zobrazit detailní rozpis úspory tokenů (schémata vs komprese zpráv)",
-  route: "nastavit proxy směrování poskytovatelů (google | openrouter | openai | anthropic | moonshotai)",
+  savings:
+    "zobrazit detailní rozpis úspory tokenů (schémata vs komprese zpráv)",
+  route:
+    "nastavit proxy směrování poskytovatelů (google | openrouter | openai | anthropic | moonshotai)",
   scope: "přepnout rozsah zobrazení ve statusline (session | lifetime)",
   "reset-session": "vynulovat výchozí stav relace na aktuální okamžik",
   dashboard: "otevřít webový dashboard Headroom v prohlížeči",
@@ -226,10 +228,15 @@ export function registerHeadroomCommands(
 
     // 1st Token Completion (Subcommands from Dictionary)
     const typed = (tokens[0] ?? "").toLowerCase();
+    const NON_TERMINAL = new Set(["format", "scope", "route"]);
     const items: AutocompleteItem[] = [];
     for (const [value, description] of Object.entries(COMMAND_DOCS)) {
       if (value.toLowerCase().startsWith(typed)) {
-        items.push({ value, label: value, description });
+        items.push({
+          value: NON_TERMINAL.has(value) ? `${value} ` : value,
+          label: value,
+          description,
+        });
       }
     }
 
@@ -297,7 +304,11 @@ export function registerHeadroomCommands(
         const provider = (rest[0] ?? "").toLowerCase();
         const action = (rest[1] ?? "").toLowerCase();
 
-        if (!provider || !action || !["on", "off", "enable", "disable"].includes(action)) {
+        if (
+          !provider ||
+          !action ||
+          !["on", "off", "enable", "disable"].includes(action)
+        ) {
           ctx.ui.notify(
             "Použití: /headroom route <google|openrouter|openai|anthropic|moonshotai> on|off [--global]",
             "warning",
@@ -456,7 +467,8 @@ export function registerHeadroomCommands(
   };
 
   pi.registerCommand("headroom", {
-    description: "Správa optimalizace kontextu Headroom, směrování poskytovatelů a statusline",
+    description:
+      "Správa optimalizace kontextu Headroom, směrování poskytovatelů a statusline",
     getArgumentCompletions: getCompletions,
     handler: commandHandler,
   });
