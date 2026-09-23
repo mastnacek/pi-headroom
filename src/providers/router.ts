@@ -26,12 +26,18 @@ export async function isProxyRunning(
 
 /**
  * Registers all supported provider proxies (Google OAuth, OpenRouter, etc.) into Pi.
+ *
+ * `enabled: false` is the master switch: when the Headroom integration is off we
+ * must not hijack provider base URLs. Re-pointing OpenRouter/Google at a proxy
+ * that is not running turns every request into an opaque `Connection error.`
+ * even though the upstream provider is healthy.
  */
 export function registerProviderRoutes(
   pi: ExtensionAPI,
   getConfig: () => HeadroomConfig,
 ): void {
   const config = getConfig();
+  if (!config.enabled) return;
   const proxyBaseUrl = `http://${config.host}:${config.port}/v1`;
 
   // 1. Google OAuth Provider (Antigravity & Gemini CLI via Cloud Code Assist wire)

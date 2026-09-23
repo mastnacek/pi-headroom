@@ -1,6 +1,6 @@
 {
   "name": "pi-headroom",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Unified Headroom context optimization suite for Pi coding agent — real-time statusline badge, session savings tracking, CCR retrieval, and multi-provider proxy routing (Google OAuth/Antigravity, OpenRouter, and more).",
   "type": "module",
   "main": "index.ts",
