@@ -25,6 +25,14 @@ import type {
 } from "./src/types.js";
 
 export default function headroomExtension(pi: ExtensionAPI): void {
+  /** Unsubscribers from every `pi.on()`; drained on session_shutdown (AGENTS §5). */
+  const unsubscribers: Array<() => void> = [];
+
+  /** Retain a `pi.on()` return value; older engine typings declare it void. */
+  const track = (result: unknown): void => {
+    if (typeof result === "function") unsubscribers.push(result as () => void);
+  };
+
   let config: HeadroomConfig = loadConfig(process.cwd());
   let sessionBaseline: HeadroomSessionBaseline | null = null;
   let metrics: HeadroomMetrics = {
@@ -88,7 +96,7 @@ export default function headroomExtension(pi: ExtensionAPI): void {
   }
 
   // 1. Session Lifecycle
-  pi.on("session_start", async (_event, ctx: ExtensionContext) => {
+  track(pi.on("session_start", async (_event, ctx: ExtensionContext) => {
     config = loadConfig(ctx.cwd || process.cwd());
 
     // Restore or initialize session baseline
@@ -127,17 +135,18 @@ export default function headroomExtension(pi: ExtensionAPI): void {
       ctx.ui.setStatus("headroom", formatStatusline(metrics, config));
     }
     startPolling(ctx);
-  });
+  }));
 
-  pi.on("turn_end", async (_event, ctx: ExtensionContext) => {
+  track(pi.on("turn_end", async (_event, ctx: ExtensionContext) => {
     await refresh(ctx);
-  });
+  }));
 
-  pi.on("agent_settled", async (_event, ctx: ExtensionContext) => {
+  track(pi.on("agent_settled", async (_event, ctx: ExtensionContext) => {
     await refresh(ctx);
-  });
+  }));
 
   pi.on("session_shutdown", async () => {
+    while (unsubscribers.length > 0) unsubscribers.pop()?.();
     stopPolling();
   });
 
